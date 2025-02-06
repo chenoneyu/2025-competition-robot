@@ -11,10 +11,12 @@ public interface ElevatorIO {
     void setElevatorDirectVoltage(double volts);
     void setElevatorTarget(double meters);
     void resetElevatorPosition();
+    void elevatorOff();
     void zeroingElevator();
     double getElevatorVelocity();
     double getElevatorPosition();
     boolean isNearExtension(double expected);
+
     boolean isCurrentMax(double expected);
 
     @AutoLog

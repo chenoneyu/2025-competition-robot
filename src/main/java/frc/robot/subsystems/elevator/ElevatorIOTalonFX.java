@@ -134,6 +134,12 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     }
 
     @Override
+    public void elevatorOff(){
+        leftElevatorTalon.setControl(new VoltageOut(0));
+        rightElevatorTalon.setControl(new VoltageOut(0));
+    }
+
+    @Override
     public boolean isCurrentMax(double max){
         return leftElevatorTalon.getStatorCurrent().getValueAsDouble() > max;
     }

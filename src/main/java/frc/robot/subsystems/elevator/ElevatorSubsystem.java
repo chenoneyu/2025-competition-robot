@@ -9,6 +9,7 @@ import org.littletonrobotics.junction.Logger;
 public class ElevatorSubsystem extends SubsystemBase {
 
     public enum WantedState {
+        OFF,
         BOTTOM,
         INTAKER_INTAKE,
         INTAKER_AVOID,
@@ -21,6 +22,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public enum SystemState {
+        OFF,
         BOTTOM_STAYING,
         INTAKER_INTAKING,
         INTAKER_AVOIDING,
@@ -35,8 +37,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final ElevatorIO io;
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-    private WantedState wantedState = WantedState.BOTTOM;
-    private SystemState systemState = SystemState.BOTTOM_STAYING;
+    private WantedState wantedState = WantedState.OFF;
+    private SystemState systemState = SystemState.OFF;
 
     public ElevatorSubsystem(ElevatorIO io) {
         this.io = io;
@@ -83,6 +85,12 @@ public class ElevatorSubsystem extends SubsystemBase {
             case ZEROING:
                 io.zeroingElevator();
                 break;
+            case OFF:
+                io.elevatorOff();
+                break;
+            default:
+                io.elevatorOff();
+                break;
         }
     }
 
@@ -104,36 +112,271 @@ public class ElevatorSubsystem extends SubsystemBase {
                 }
                 if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
                         systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
-
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.BOTTOM_STAYING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/){
+                        yield SystemState.BOTTOM_STAYING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
                 }
                 if (systemState == SystemState.ZEROING) {
                     yield SystemState.ZEROING;
                 }
             }
-            case TRIGGER -> {
-                if(!inputs.higherbeamBreakState) {
-                    yield  SystemState.IDLING;
+            case L1 -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    yield SystemState.L1_STAYING;
                 }
-                yield SystemState.TRIGGERING;
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/){
+                        yield SystemState.L1_STAYING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
+                }
+                if (systemState == SystemState.FUNNEL_INTAKING){
+                    if (true/*is funnel motor off*/){
+                        yield SystemState.L1_STAYING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.L1_STAYING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/){
+                        yield SystemState.L1_STAYING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if (systemState == SystemState.ZEROING) {
+                    yield SystemState.ZEROING;
+                }
             }
-            case OUTTAKE -> SystemState.OUTTAKING;
-            case COLLECT -> {
-                if (inputs.higherbeamBreakState) {
-                    yield SystemState.IDLING;
+            case L2 -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    yield SystemState.L2_STAYING;
                 }
-                if (inputs.lowerBeamBreakState) {
-                    //Decide if note has entered intaker
-                    yield SystemState.FEEDING;
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/){
+                        yield SystemState.L2_STAYING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
                 }
-                yield SystemState.COLLECTING;
+                if (systemState == SystemState.FUNNEL_INTAKING){
+                    if (true/*is funnel motor off*/){
+                        yield SystemState.L2_STAYING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.L2_STAYING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/){
+                        yield SystemState.L2_STAYING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if (systemState == SystemState.ZEROING) {
+                    yield SystemState.ZEROING;
+                }
             }
-            case FEED -> {
-                if (inputs.higherbeamBreakState) {
-                    yield SystemState.IDLING;
+            case L3 -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    yield SystemState.L3_STAYING;
                 }
-                yield SystemState.FEEDING;
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/){
+                        yield SystemState.L3_STAYING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
+                }
+                if (systemState == SystemState.FUNNEL_INTAKING){
+                    if (true/*is funnel motor off*/){
+                        yield SystemState.L3_STAYING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.L3_STAYING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/){
+                        yield SystemState.L3_STAYING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if (systemState == SystemState.ZEROING) {
+                    yield SystemState.ZEROING;
+                }
             }
-            default -> SystemState.IDLING;
+            case L4 -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    yield SystemState.L4_STAYING;
+                }
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/){
+                        yield SystemState.L4_STAYING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
+                }
+                if (systemState == SystemState.FUNNEL_INTAKING){
+                    if (true/*is funnel motor off*/){
+                        yield SystemState.L4_STAYING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.L4_STAYING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/){
+                        yield SystemState.L4_STAYING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if (systemState == SystemState.ZEROING) {
+                    yield SystemState.ZEROING;
+                }
+            }
+            case ZEROING -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    yield SystemState.ZEROING;
+                }
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/){
+                        yield SystemState.ZEROING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
+                }
+                if (systemState == SystemState.FUNNEL_INTAKING){
+                    if (true/*is funnel motor off*/){
+                        yield SystemState.ZEROING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.ZEROING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/){
+                        yield SystemState.ZEROING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+            }
+            case INTAKER_AVOID -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/){
+                        yield SystemState.INTAKER_AVOIDING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
+                }
+                if (systemState == SystemState.FUNNEL_INTAKING){
+                    if (true/*is funnel motor off*/){
+                        yield SystemState.INTAKER_AVOIDING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/) {
+                        yield SystemState.INTAKER_AVOIDING;
+                    }
+                    yield systemState;
+                }
+                if(systemState == SystemState.ZEROING){
+                    yield SystemState.ZEROING;
+                }
+            }
+            case FUNNEL_INTAKE -> {
+                if (systemState == SystemState.BOTTOM_STAYING){
+                    if(true/*no things in the shooter*/){
+                        yield SystemState.FUNNEL_INTAKING;
+                    }
+                    yield SystemState.BOTTOM_STAYING;
+                }
+                if (systemState == SystemState.INTAKER_INTAKING) {
+                    if (true/*is intaker motor off*/ && true /*no things in the shooter*/){
+                        yield SystemState.FUNNEL_INTAKING;
+                    }
+                    yield SystemState.INTAKER_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/ && true /*no things in the shooter*/) {
+                        yield SystemState.FUNNEL_INTAKING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/ && true /*no things in the shooter*/){
+                        yield SystemState.FUNNEL_INTAKING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if(systemState == SystemState.ZEROING){
+                    yield SystemState.ZEROING;
+                }
+            }
+            case INTAKER_INTAKE -> {
+                if (systemState == SystemState.BOTTOM_STAYING) {
+                    if (true/*no things in the shooter*/) {
+                        yield SystemState.INTAKER_INTAKING;
+                    }
+                    yield SystemState.BOTTOM_STAYING;
+                }
+                if (systemState == SystemState.FUNNEL_INTAKING) {
+                    if (true/*is funnel motor off*/ && true /*no things in the shooter*/) {
+                        yield SystemState.INTAKER_INTAKING;
+                    }
+                    yield SystemState.FUNNEL_INTAKING;
+                }
+                if (systemState == SystemState.L1_STAYING || systemState == SystemState.L2_STAYING ||
+                        systemState == SystemState.L3_STAYING || systemState == SystemState.L4_STAYING) {
+                    if (true/*is shooter motor off*/ && true /*no things in the shooter*/) {
+                        yield SystemState.INTAKER_AVOIDING;
+                    }
+                    yield systemState;
+                }
+                if (systemState == SystemState.INTAKER_AVOIDING) {
+                    if (true/*is intaker come in or out finished*/ && true /*no things in the shooter*/) {
+                        yield SystemState.INTAKER_INTAKING;
+                    }
+                    yield SystemState.INTAKER_AVOIDING;
+                }
+                if (systemState == SystemState.ZEROING) {
+                    yield SystemState.ZEROING;
+                }
+            }
+            case OFF -> SystemState.OFF;
         };
     }
 
