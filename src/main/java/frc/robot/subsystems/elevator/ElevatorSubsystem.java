@@ -380,5 +380,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         };
     }
 
-
+    public void setWantedState(WantedState wantedState){
+        this.wantedState = wantedState;
+    };
 }
