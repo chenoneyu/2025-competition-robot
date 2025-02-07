@@ -17,14 +17,10 @@ import edu.wpi.first.wpilibj2.command.button.*;
 import frc.robot.auto.basics.AutoActions;
 import frc.robot.commands.*;
 import frc.robot.display.Display;
-import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.apriltagvision.AprilTagVisionIONorthstar;
-import frc.robot.subsystems.beambreak.BeambreakIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.endeffector.EndEffectorIOReal;
-import frc.robot.subsystems.endeffector.EndEffectorSubsystem;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.utils.AllianceFlipUtil;
 import lombok.Getter;
@@ -33,7 +29,6 @@ import org.frcteam6941.looper.UpdateManager;
 import org.json.simple.parser.ParseException;
 
 import static edu.wpi.first.units.Units.Seconds;
-import static frc.robot.RobotConstants.BeamBreakConstants.*;
 
 import java.io.IOException;
 import java.util.function.*;
@@ -61,10 +56,6 @@ public class RobotContainer {
     Swerve swerve = Swerve.getInstance();
     Display display = Display.getInstance();
     ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOReal());
-    EndEffectorSubsystem endEffectorSubsystem = new EndEffectorSubsystem(new EndEffectorIOReal(), new BeambreakIOReal(ENDEFFECTOR_MIDDLE_BEAMBREAK_ID), new BeambreakIOReal(ENDEFFECTOR_EDGE_BEAMBREAK_ID));
-
-    Superstructure superstructure =  new Superstructure(endEffectorSubsystem);
-
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -129,19 +120,7 @@ public class RobotContainer {
 
     //Configure all commands for testing
     private void configureTesterBindings(CommandXboxController controller) {
-        //test of endeffector state machine
-        new Trigger(controller.leftBumper())
-                .onTrue(superstructure.setWantedSuperStateCommand(Superstructure.WantedSuperState.INTAKE_CORAL_FUNNEL));
-        new Trigger(controller.rightBumper())
-                .onTrue(superstructure.setWantedSuperStateCommand(Superstructure.WantedSuperState.SHOOT_CORAL));
-        new Trigger(controller.start())
-                .onTrue(superstructure.setWantedSuperStateCommand(Superstructure.WantedSuperState.STOPPED));
-        //test of elevator heights
-        controller.a().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(0.5),elevatorSubsystem).until(() ->elevatorSubsystem.isAtSetpoint(0.5)));
-        controller.b().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(0.6),elevatorSubsystem).until(() ->elevatorSubsystem.isAtSetpoint(0.6)));
-        controller.x().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(0.7),elevatorSubsystem).until(() ->elevatorSubsystem.isAtSetpoint(0.7)));
-        controller.y().onTrue(Commands.runOnce(() -> elevatorSubsystem.setPosition(0.47),elevatorSubsystem).until(() ->elevatorSubsystem.isAtSetpoint(0.47)));
-        controller.povDown().onTrue(new ElevatorZeroingCommand(elevatorSubsystem));
+
     }
 
     /**
